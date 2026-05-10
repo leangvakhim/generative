@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Diffusion Models</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- KaTeX for beautiful Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* Smooth fade for canvas transitions */
+        canvas {
+            image-rendering: pixelated;
+            /* Gives the noise a crisp, authentic static look */
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 md:p-8 font-sans text-slate-800">
+
+    <!-- Main App Container -->
+    <div
+        class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl flex flex-col min-h-[750px] border border-slate-100 overflow-hidden">
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 p-6 text-white text-center shadow-md z-10">
+            <h1 class="text-3xl font-bold tracking-tight">Understanding Diffusion Models</h1>
+            <p class="text-blue-100 mt-2 text-sm font-medium uppercase tracking-wider">Generative AI Concepts</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="flex justify-center items-center px-4 py-6 bg-slate-50 border-b border-slate-200" id="stepper">
+            <!-- Dynamically generated stepper -->
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 flex flex-col md:flex-row p-6 md:p-10 gap-8 items-center">
+
+            <!-- Left: Visualization Area (Canvas / Math) -->
+            <div class="w-full md:w-1/2 flex justify-center items-center relative min-h-[450px]">
+
+                <!-- Canvas for Image/Noise Visuals -->
+                <div id="canvasWrapper" class="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 relative">
+                    <canvas id="mainCanvas" width="300" height="300"
+                        class="rounded-xl w-[300px] h-[300px] shadow-inner bg-white"></canvas>
+
+                    <!-- Progress bar overlay for animations -->
+                    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden opacity-0 transition-opacity duration-300"
+                        id="animProgressContainer">
+                        <div id="animProgressBar" class="h-full bg-blue-500 w-0 transition-all duration-75"></div>
+                    </div>
+                </div>
+
+                <!-- Math Equations Container (Hidden by default) -->
+                <div id="mathContainer"
+                    class="hidden absolute inset-0 flex flex-col items-center justify-center p-2 text-slate-800 bg-white rounded-2xl shadow-xl border border-slate-100 fade-in w-full h-full overflow-y-auto">
+                    <div class="w-full text-center space-y-5 p-4">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 shadow-sm">
+                            <h3 class="font-semibold text-blue-800 text-xs uppercase tracking-widest mb-2">1. Forward
+                                Process (Adding Noise)</h3>
+                            <div class="text-[1.1rem]">$$q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1 - \beta_t} x_{t-1},
+                                \beta_t \mathbf{I})$$</div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-sm">
+                            <h3 class="font-semibold text-indigo-800 text-xs uppercase tracking-widest mb-2">2. Reverse
+                                Process (Denoising)</h3>
+                            <div class="text-[1.1rem]">$$p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t,
+                                t), \Sigma_\theta(x_t, t))$$</div>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-sm">
+                            <h3 class="font-semibold text-emerald-800 text-xs uppercase tracking-widest mb-2">3.
+                                Simplified Training Objective</h3>
+                            <div class="text-[1.1rem]">$$\mathcal{L}_{simple} = \mathbb{E}_{t, x_0, \epsilon} \left[ \|
+                                \epsilon - \epsilon_\theta(x_t, t) \|^2 \right]$$</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Text Description Area -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center space-y-4 fade-in" id="textContainer">
+                <span id="stepBadge"
+                    class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full w-max uppercase tracking-wider">Step
+                    1</span>
+                <h2 id="stepTitle" class="text-3xl font-bold text-slate-800"></h2>
+                <p id="stepDesc" class="text-lg text-slate-600 leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- Footer Controls -->
+        <div class="p-6 bg-white border-t border-slate-100 flex justify-between items-center rounded-b-3xl">
+            <button id="btnBack" onclick="prevStep()"
+                class="px-6 py-3 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                &larr; Back
+            </button>
+            <div class="flex space-x-2" id="dotsContainer">
+                <!-- Dots added by JS -->
+            </div>
+            <button id="btnNext" onclick="nextStep()"
+                class="px-8 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                Next Step &rarr;
+            </button>
+        </div>
+    </div>
+
+    <script src="../js/diffusion_model.js"></script>
+</body>
+
+</html>

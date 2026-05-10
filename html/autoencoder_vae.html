@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoencoders & VAEs Visualized</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for rendering equations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            startup: {
+                typeset: false // We will trigger typesetting manually when steps change
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Custom animations and styles */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 400ms, transform 400ms;
+        }
+
+        .pulse-node {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+            }
+        }
+
+        .flow-arrow {
+            position: relative;
+            width: 40px;
+            height: 2px;
+            background: #e5e7eb;
+        }
+
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #e5e7eb;
+            border-right: 2px solid #e5e7eb;
+            transform: rotate(45deg);
+        }
+
+        /* Math display adjustments */
+        .mjx-chtml {
+            margin: 0 !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Container -->
+    <div
+        class="bg-white rounded-3xl shadow-xl border border-gray-100 w-full max-w-6xl overflow-hidden flex flex-col min-h-[700px]">
+
+        <!-- Header -->
+        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white z-10">
+            <div>
+                <h1
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+                    Generative Models: Autoencoders & VAEs
+                </h1>
+                <p class="text-gray-500 text-sm mt-1" id="step-subtitle">Step 1 of 5</p>
+            </div>
+
+            <!-- Step Indicators -->
+            <div class="flex space-x-2" id="step-dots">
+                <!-- Dots injected via JS -->
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-grow p-8 flex flex-col md:flex-row gap-8 relative overflow-hidden bg-white" id="content-area">
+            <!-- Content injected via JS -->
+        </div>
+
+        <!-- Footer / Controls -->
+        <div class="px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+            <button id="btn-prev"
+                class="px-6 py-2.5 rounded-full font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                &larr; Previous Step
+            </button>
+            <button id="btn-next"
+                class="px-6 py-2.5 rounded-full font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                Next Step &rarr;
+            </button>
+        </div>
+    </div>
+
+    <script src="../js/autoencoder_vae.js"></script>
+</body>
+
+</html>
