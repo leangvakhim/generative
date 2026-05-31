@@ -1,3 +1,4 @@
+// <!-- Consolidated JavaScript -->
 // SVG Assets for visualization
 const svgs = {
     intro: `<svg class="w-32 h-32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" class="text-purple-500" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" class="text-blue-500" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>`,
@@ -61,7 +62,35 @@ const svgs = {
                 $$\\min_{G} \\max_{D} V(D, G) = \\mathbb{E}_{x \\sim p_{data}(x)}[\\log D(x)] + \\mathbb{E}_{z \\sim p_{z}(z)}[\\log(1 - D(G(z)))]$$
             </p>
         </div>
-    </div>`
+    </div>`,
+
+    code: `<div class="whitespace-pre-wrap w-full max-w-2xl h-full overflow-y-auto bg-slate-900 rounded-xl p-5 text-left text-xs sm:text-sm font-mono text-slate-300 shadow-inner leading-relaxed">
+<span class="text-green-400">import</span> torch
+<span class="text-green-400">import</span> torch.nn <span class="text-green-400">as</span> nn
+
+<span class="text-slate-500"># 1. The Generator (Forger)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-200">Generator</span>(nn.Module):
+<span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+<span class="text-indigo-300">super</span>().__init__()
+self.model = nn.Sequential(
+    nn.Linear(<span class="text-orange-300">10</span>, <span class="text-orange-300">32</span>), nn.ReLU(),
+    nn.Linear(<span class="text-orange-300">32</span>, <span class="text-orange-300">5</span>), nn.Tanh()
+)
+
+<span class="text-slate-500"># 2. The Discriminator (Detective)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-200">Discriminator</span>(nn.Module):
+<span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+<span class="text-indigo-300">super</span>().__init__()
+self.model = nn.Sequential(
+    nn.Linear(<span class="text-orange-300">5</span>, <span class="text-orange-300">32</span>), nn.ReLU(),
+    nn.Linear(<span class="text-orange-300">32</span>, <span class="text-orange-300">1</span>), nn.Sigmoid()
+)
+
+<span class="text-slate-500"># 3. The Adversarial Loop Setup</span>
+generator = Generator()
+discriminator = Discriminator()
+criterion = nn.BCELoss() <span class="text-slate-500"># Judges Real (1) vs Fake (0)</span>
+</div>`
 };
 
 // Step Data
@@ -88,8 +117,13 @@ const steps = [
     },
     {
         title: "Step 4: The GAN Equation (Minimax Game)",
-        desc: "Mathematically, they are playing a 'Minimax' game. <br><br> <ul class='text-left inline-block mt-4 space-y-2 text-sm'><li><span class='text-blue-600 font-bold'>D(x)</span> = Detective's guess that a real image is real.</li><li><span class='text-purple-600 font-bold'>G(z)</span> = Forger's fake image made from noise (z).</li><li><span class='text-blue-600 font-bold'>D(G(z))</span> = Detective's guess that the fake image is real.</li></ul> <br><br> The Detective ($D$) wants to <strong>maximize</strong> the formula (be right). The Forger ($G$) wants to <strong>minimize</strong> the formula (make the Detective wrong).",
+        desc: "Mathematically, they are playing a 'Minimax' game. <br><br> <ul class='text-left inline-block mt-4 space-y-2 text-sm'><li><span class='text-blue-600 font-bold'>D(x)</span> = Detective's guess that a real image is real.</li><li><span class='text-purple-600 font-bold'>G(z)</span> = Forger's fake image made from noise (z).</li><li><span class='text-blue-600 font-bold'>D(G(z))</span> = Detective's guess that the fake image is real.</li></ul> <br><br> The Detective (D) wants to <strong>maximize</strong> the formula (be right). The Forger (G) wants to <strong>minimize</strong> the formula (make the Detective wrong).",
         visual: svgs.math
+    },
+    {
+        title: "Step 5: Writing the Code in PyTorch",
+        desc: "Now it is time to build this in Python! <br><br> Using PyTorch, we define our <strong>Generator</strong> and <strong>Discriminator</strong> as simple Neural Network classes. Then, we set up a training loop using <code>Binary Cross Entropy</code> loss to let them fight and learn from each other.",
+        visual: svgs.code
     }
 ];
 
@@ -104,6 +138,7 @@ const nextBtn = document.getElementById('btn-next');
 const counterEl = document.getElementById('step-counter');
 const indicatorsContainer = document.getElementById('step-indicators');
 const contentAnim = document.getElementById('step-content');
+const extraActionContainer = document.getElementById('extra-action-container');
 
 // Initialize Indicators
 function initIndicators() {
@@ -126,6 +161,18 @@ function updateUI() {
         titleEl.innerHTML = step.title;
         descEl.innerHTML = step.desc;
         visualEl.innerHTML = step.visual;
+
+        // Toggle logic for the special button (only shows on the last step: currentStep === 5)
+        if (currentStep === 4) {
+            extraActionContainer.innerHTML = `
+                <a href="./gans_math.html" target="_blank" class="inline-flex justify-center items-center px-6 py-2.5 rounded-lg font-medium text-white bg-green-600 hover:bg-green-700 transition-colors shadow-sm focus:ring-4 focus:ring-green-300 outline-none">
+                    Mathematical Explanations
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            `;
+        } else {
+            extraActionContainer.innerHTML = '';
+        }
 
         // Update Buttons
         prevBtn.disabled = currentStep === 0;
@@ -162,7 +209,7 @@ function updateUI() {
 
         contentAnim.classList.remove('fade-enter');
         contentAnim.classList.add('fade-enter-active');
-    }, 50); // Small delay to allow CSS class reset
+    }, 50);
 }
 
 // Event Listeners
