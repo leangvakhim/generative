@@ -14,6 +14,12 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
+    <!-- Highlight.js for Python Code Formatting -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+
     <style>
         /* Smooth fade for canvas transitions */
         canvas {
@@ -36,6 +42,21 @@
                 transform: translateY(0);
             }
         }
+
+        /* Custom scrollbar for the code container */
+        #codeContainer::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #codeContainer::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        #codeContainer::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -52,18 +73,20 @@
         </div>
 
         <!-- Stepper -->
-        <div class="flex justify-center items-center px-4 py-6 bg-slate-50 border-b border-slate-200" id="stepper">
+        <div class="flex flex-wrap justify-center items-center px-4 py-6 bg-slate-50 border-b border-slate-200"
+            id="stepper">
             <!-- Dynamically generated stepper -->
         </div>
 
         <!-- Content Area -->
         <div class="flex-1 flex flex-col md:flex-row p-6 md:p-10 gap-8 items-center">
 
-            <!-- Left: Visualization Area (Canvas / Math) -->
+            <!-- Left: Visualization Area (Canvas / Math / Code) -->
             <div class="w-full md:w-1/2 flex justify-center items-center relative min-h-[450px]">
 
                 <!-- Canvas for Image/Noise Visuals -->
-                <div id="canvasWrapper" class="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 relative">
+                <div id="canvasWrapper"
+                    class="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 relative w-[332px]">
                     <canvas id="mainCanvas" width="300" height="300"
                         class="rounded-xl w-[300px] h-[300px] shadow-inner bg-white"></canvas>
 
@@ -99,6 +122,61 @@
                     </div>
                 </div>
 
+                <!-- Code Container (Hidden by default) -->
+                <div id="codeContainer"
+                    class="hidden absolute inset-0 bg-[#282c34] rounded-2xl shadow-xl fade-in w-full h-full overflow-y-auto text-left">
+                    <pre><code class="language-python text-sm !bg-transparent !p-6" id="pythonCodeBlock">
+import torch
+import torch.nn as nn
+
+# 1. Forward Process (Adding Noise)
+def add_noise(original_image, timestep, noise_schedule):
+    # This acts like our static TV screen formula.
+    # It calculates exactly how much noise to add for a given step.
+
+    # Generate random pure noise
+    noise = torch.randn_like(original_image)
+
+    # Get the noise amount for the current timestep
+    alpha = noise_schedule[timestep]
+
+    # Blend the original image with the static noise
+    noisy_image = (alpha ** 0.5) * original_image + ((1 - alpha) ** 0.5) * noise
+
+    return noisy_image, noise
+
+# 2. The AI Model (Predicting Noise)
+class SimpleDiffusionAI(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # In reality, this is a complex U-Net.
+        # Here we use a simple network for understanding.
+        self.network = nn.Sequential(
+            nn.Linear(28*28, 128),
+            nn.ReLU(),
+            nn.Linear(128, 28*28) # Output predicts the noise pattern
+        )
+
+    def forward(self, noisy_image, timestep):
+        # The AI looks at the noisy image and guesses the noise
+        return self.network(noisy_image)
+
+# 3. Training the Model
+def calculate_loss(model, original_image, timestep, schedule):
+    # Step A: Mathematically ruin the image
+    noisy_img, true_noise = add_noise(original_image, timestep, schedule)
+
+    # Step B: Ask the AI to guess what noise was added
+    predicted_noise = model(noisy_img, timestep)
+
+    # Step C: Check how wrong the AI was (Mean Squared Error)
+    # The goal is to make this difference as close to 0 as possible
+    loss = nn.functional.mse_loss(predicted_noise, true_noise)
+
+    return loss
+                    </code></pre>
+                </div>
+
             </div>
 
             <!-- Right: Text Description Area -->
@@ -107,7 +185,22 @@
                     class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full w-max uppercase tracking-wider">Step
                     1</span>
                 <h2 id="stepTitle" class="text-3xl font-bold text-slate-800"></h2>
-                <p id="stepDesc" class="text-lg text-slate-600 leading-relaxed"></p>
+                <div id="stepDesc" class="text-lg text-slate-600 leading-relaxed"></div>
+
+                <!-- Extra Button specifically for Step 5 -->
+                <div id="extraBtnContainer" class="hidden mt-4 pt-4 border-t border-slate-200 flex justify-center">
+                    <button onclick="openExternalHtmlFile()"
+                        class="flex items-center px-5 py-2.5 bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 rounded-lg font-semibold transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Mathematicals Explations
+                    </button>
+                    <!-- <p class="text-xs text-slate-400 mt-2">Clicking this will generate and open a completely separate
+                        HTML file in a new tab.</p> -->
+                </div>
             </div>
         </div>
 
@@ -117,9 +210,6 @@
                 class="px-6 py-3 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
                 &larr; Back
             </button>
-            <div class="flex space-x-2" id="dotsContainer">
-                <!-- Dots added by JS -->
-            </div>
             <button id="btnNext" onclick="nextStep()"
                 class="px-8 py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
                 Next Step &rarr;

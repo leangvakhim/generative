@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusion Models: Step-by-Step</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- KaTeX CSS for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .step-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .step-container.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Custom slider styling for the sandbox */
+        input[type=range] {
+            accent-color: #3b82f6;
+        }
+
+        .math-block {
+            background-color: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Main Application Container -->
+    <main
+        class="max-w-4xl mx-auto w-full mt-6 mb-12 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col flex-grow">
+
+        <!-- Header / Progress Area -->
+        <header class="bg-slate-900 text-white p-6 border-b border-slate-700">
+            <h1 class="text-2xl font-bold flex items-center gap-3">
+                <i class="fa-solid fa-wand-magic-sparkles text-blue-400"></i>
+                Generative AI: The Diffusion Process
+            </h1>
+
+            <!-- Progress Bar -->
+            <div class="mt-6">
+                <div class="flex justify-between text-xs font-semibold text-slate-400 mb-2">
+                    <span>The Lego Castle</span>
+                    <span>The Math</span>
+                    <span>Interactive Sandbox</span>
+                </div>
+                <div class="w-full bg-slate-700 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
+                        style="width: 14%"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-6 md:p-10 flex-grow relative overflow-y-auto" style="min-h: 400px;">
+
+            <!-- Step 1: Analogy Intro -->
+            <div id="step-0" class="step-container active">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-6 text-center">Part 1: The ELI7 Story 🏰</h2>
+                <p class="text-lg mb-4 text-slate-600 leading-relaxed text-center">
+                    Explaining complex generative AI concepts with simple analogies is a brilliant way to break down the
+                    fundamentals.
+                </p>
+                <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 text-center shadow-sm">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3663/3663248.png" onerror="this.src=''"
+                        alt="Castle Icon" class="w-24 h-24 mx-auto mb-4 opacity-80" />
+                    <p class="text-xl font-medium text-slate-700">
+                        Let's imagine this process as a story about a <strong>Lego Castle</strong>, a
+                        <strong>Mischievous Monster</strong>, and a <strong>Magical Helper</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2: Forward Process Analogy -->
+            <div id="step-1" class="step-container">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-ghost text-purple-500"></i> 1. The Forward Process (Adding Noise)
+                </h2>
+                <div class="space-y-4 text-lg text-slate-700">
+                    <p>Imagine you spend hours building a beautiful, perfect Lego castle. This castle is your
+                        <strong>original image</strong>.</p>
+                    <p>Now, imagine a mischievous little monster sneaks into your room. Every minute, the monster takes
+                        off a few of your perfectly placed Lego blocks and replaces them with random, brightly colored
+                        blocks from a messy bin.</p>
+                    <ul
+                        class="list-disc pl-6 space-y-2 mt-4 bg-purple-50 p-6 rounded-xl border border-purple-100 shadow-inner">
+                        <li><strong>Minute 1:</strong> The castle looks mostly fine, just a little weird.</li>
+                        <li><strong>Minute 10:</strong> It's looking pretty messy.</li>
+                        <li><strong>Minute 100:</strong> The castle is completely gone. It’s just a giant, random pile
+                            of messy blocks.</li>
+                    </ul>
+                    <p class="font-semibold text-slate-900 mt-4">
+                        This is the Forward Process. We take a perfect image and slowly add random "noise" (messiness)
+                        until it looks like TV static.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3: Reverse Process Analogy -->
+            <div id="step-2" class="step-container">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic text-emerald-500"></i> 2. The Reverse Process & Training
+                </h2>
+                <div class="space-y-6 text-lg text-slate-700">
+                    <div>
+                        <h3 class="text-xl font-semibold text-emerald-700 mb-2">The Reverse Process (Denoising)</h3>
+                        <p>Now, imagine you have a Magical Helper (this is the <strong>AI model</strong>). The helper
+                            looks at that giant pile of messy blocks. Their job is to figure out exactly which weird
+                            blocks the monster added last, and swap them back to the correct ones.</p>
+                        <p class="mt-2">The helper works backward, minute by minute, guessing which blocks to fix until
+                            the messy pile turns back into your perfect Lego castle!</p>
+                    </div>
+
+                    <div class="bg-emerald-50 p-6 rounded-xl border border-emerald-100 shadow-inner">
+                        <h3 class="text-xl font-semibold text-emerald-800 mb-2">3. The Training Objective (How the
+                            Helper Learns)</h3>
+                        <p>How does the helper get so good at fixing the castle? We test them!</p>
+                        <p class="mt-2">We watch the monster add the messy blocks, so we know the <em>secret</em> of
+                            exactly what was changed. We ask the helper, <strong>"What blocks do you think the monster
+                                just added?"</strong></p>
+                        <p class="mt-2 font-medium">If the helper guesses wrong, we give them a score based on how far
+                            off their guess was. The goal is to train the helper until their "wrongness score" (the
+                            loss) is a perfect zero.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: The Math - Forward -->
+            <div id="step-3" class="step-container">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-6 text-center">Part 2: The Step-by-Step Math 🧮
+                </h2>
+                <p class="text-lg text-slate-700 mb-4 text-center">
+                    Now, let's look at those specific equations and apply some simple, step-by-step math. Let's pretend
+                    our image is just <strong>one single pixel</strong>, and its brightness is a number: $x_0 = 100$.
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-900 mt-8">1. Forward Process (Adding Noise)</h3>
+                <div class="math-block text-xl text-center">
+                    $$q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1 - \beta_t} x_{t-1}, \beta_t \mathbf{I})$$
+                </div>
+
+                <div class="space-y-3 text-slate-700">
+                    <p><strong>What it means:</strong> Calculates what the pixel looks like at the next step ($x_t$)
+                        based on the current step ($x_{t-1}$).</p>
+                    <ul class="list-disc pl-6 space-y-1">
+                        <li>$\mathcal{N}$ is a Normal Distribution (a mathematical dice roll).</li>
+                        <li>$\beta_t$ (Beta) is the size of the monster's mess.</li>
+                    </ul>
+
+                    <div class="bg-white p-5 border border-slate-200 rounded-lg shadow-sm mt-4">
+                        <h4 class="font-semibold text-slate-900 mb-2">Step-by-Step Calculation:</h4>
+                        <p>Starting pixel: $x_{t-1} = 100$. Noise level: $\beta_t = 0.19$.</p>
+                        <p class="mt-2">1. Calculate the new "core" value (the Mean):</p>
+                        <p class="bg-slate-50 p-2 rounded text-center my-2">$$\sqrt{1 - 0.19} \times 100 = \sqrt{0.81}
+                            \times 100 = 0.9 \times 100 = 90$$</p>
+                        <p>2. Roll the mathematical dice. Let's say the random noise bump is <strong>+3</strong>.</p>
+                        <p class="mt-2 font-medium text-blue-700">Result: Our new noisy pixel is $90 + 3 = 93$. The
+                            pixel is shrinking toward zero, and the random noise is taking over!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: The Math - Reverse -->
+            <div id="step-4" class="step-container">
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">2. Reverse Process (Denoising)</h3>
+
+                <div class="math-block text-xl text-center">
+                    $$p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))$$
+                </div>
+
+                <div class="space-y-4 text-slate-700 text-lg">
+                    <p><strong>What it means:</strong> This is the AI trying to undo the math we just did. $p_\theta$
+                        is the Neural Network.</p>
+                    <p>It looks at the noisy pixel ($x_t = 93$) and tries to guess the original cleaner pixel
+                        ($x_{t-1}$).</p>
+
+                    <div class="bg-indigo-50 p-5 rounded-lg border border-indigo-100 shadow-sm">
+                        <h4 class="font-semibold text-indigo-900 mb-2">How it works:</h4>
+                        <p>The AI spits out two important things:</p>
+                        <ul class="list-disc pl-6 mt-2 space-y-2">
+                            <li>$\mu_\theta$ : Its best guess for what the number was.</li>
+                            <li>$\Sigma_\theta$ : How confident it is in that guess.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: The Math - Training -->
+            <div id="step-5" class="step-container">
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">3. Simplified Training Objective</h3>
+
+                <div class="math-block text-xl text-center">
+                    $$\mathcal{L}_{simple} = \mathbb{E}_{t, x_0, \epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t,
+                    t)\|^2 \right]$$
+                </div>
+
+                <div class="space-y-3 text-slate-700">
+                    <p><strong>What it means:</strong> This is the "wrongness score" (the Scorecard). $\mathcal{L}$
+                        stands for Loss.</p>
+                    <ul class="list-disc pl-6 space-y-1">
+                        <li>$\epsilon$ (Epsilon) is the <strong>actual noise</strong> the monster added.</li>
+                        <li>$\epsilon_\theta$ is the noise the <strong>AI guessed</strong> the monster added.</li>
+                    </ul>
+
+                    <div class="bg-rose-50 p-5 border border-rose-100 rounded-lg shadow-sm mt-4">
+                        <h4 class="font-semibold text-rose-900 mb-2">Step-by-Step Calculation:</h4>
+                        <p>1. We know the exact noise the monster added was <strong>$\epsilon = 5$</strong>.</p>
+                        <p>2. The AI looks at the messy pixel and guesses the noise was <strong>$\epsilon_\theta =
+                                2$</strong>.</p>
+                        <p class="mt-2">3. Find the difference: $5 - 2 = 3$. The AI was off by 3.</p>
+                        <p>4. Square the difference to strongly punish big mistakes: $3^2 = 9$.</p>
+                        <div
+                            class="mt-4 p-3 bg-white border border-rose-200 rounded text-center text-rose-700 font-bold">
+                            Result: The Loss is 9. The AI will update its brain to get that score closer to 0!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Interactive Sandbox -->
+            <div id="step-6" class="step-container">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-2 text-center">Diffusion Process Sandbox 🎛️</h2>
+                <p class="text-center text-slate-500 mb-6">Slide the inputs to see how the Forward Process and Loss
+                    calculate step-by-step.</p>
+
+                <div class="grid md:grid-cols-2 gap-6 h-full">
+
+                    <!-- Controls Column -->
+                    <div class="bg-white px-5 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                        <h3 class="font-bold text-slate-800 border-b pb-2">Inputs</h3>
+
+                        <!-- Slider 1 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-700">Original Pixel ($x_{t-1}$)</label>
+                                <span id="val-x" class="text-sm font-bold text-blue-600">100</span>
+                            </div>
+                            <input type="range" id="input-x" min="0" max="255" value="100"
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <!-- Slider 2 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-700">Noise Factor ($\beta_t$)</label>
+                                <span id="val-beta" class="text-sm font-bold text-blue-600">0.19</span>
+                            </div>
+                            <input type="range" id="input-beta" min="0" max="0.99" step="0.01" value="0.19"
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <!-- Slider 3 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-700">Actual Noise Bump
+                                    ($\epsilon$)</label>
+                                <span id="val-epsilon" class="text-sm font-bold text-rose-500">5</span>
+                            </div>
+                            <input type="range" id="input-epsilon" min="-20" max="20" step="1" value="5"
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <!-- Slider 4 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-700">AI Predicted Noise
+                                    ($\epsilon_\theta$)</label>
+                                <span id="val-ai" class="text-sm font-bold text-emerald-500">2</span>
+                            </div>
+                            <input type="range" id="input-ai" min="-20" max="20" step="1" value="2"
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Outputs Column -->
+                    <div class="space-y-4 h-full">
+                        <!-- Forward Process Output -->
+                        <div
+                            class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm h-[49%] flex flex-col justify-center">
+                            <h3 class="font-bold text-blue-900 mb-2"><i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                Forward Process Output</h3>
+                            <p class="text-sm text-slate-600 mb-3">Calculating the new noisy pixel $x_t$:</p>
+
+                            <div id="math-out-mean" class="text-center text-lg mb-2"></div>
+                            <div id="math-out-xt"
+                                class="text-center text-xl font-bold p-2 bg-white rounded shadow-sm border border-blue-100">
+                            </div>
+                        </div>
+
+                        <!-- Loss Output -->
+                        <div
+                            class="bg-rose-50 p-5 rounded-xl border border-rose-200 shadow-sm h-[49%] flex flex-col justify-center">
+                            <h3 class="font-bold text-rose-900 mb-2"><i class="fa-solid fa-bullseye"></i> Training
+                                Objective (Loss)</h3>
+                            <p class="text-sm text-slate-600 mb-3">Scoring the AI's guess:</p>
+
+                            <div id="math-out-loss-calc" class="text-center text-lg mb-2"></div>
+                            <div id="math-out-loss"
+                                class="text-center text-xl font-bold p-2 bg-white rounded shadow-sm border border-rose-100 text-rose-700">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer / Navigation Controls -->
+        <footer
+            class="bg-slate-50 border-t border-slate-200 p-6 flex justify-between items-center mt-auto rounded-b-2xl">
+            <button id="btn-back"
+                class="px-6 py-2.5 rounded-lg font-medium text-slate-600 bg-white border border-slate-300 shadow-sm hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+
+            <div class="text-slate-500 font-medium text-sm">
+                Step <span id="step-counter">1</span> of 7
+            </div>
+
+            <button id="btn-next"
+                class="px-6 py-2.5 rounded-lg font-medium text-white bg-blue-600 shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2">
+                Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </footer>
+    </main>
+
+    <script src="../js/diffusion_math.js"></script>
+</body>
+
+</html>
