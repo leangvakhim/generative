@@ -1,13 +1,16 @@
+// <!-- Consolidated JavaScript -->
 // Data for the visualization steps
 const steps = [
     {
         title: "1. The Standard Autoencoder (AE)",
+        link: "./standard_autoencoder.html",
+        buttonText: "Standard Autoencoder (AEs) Details",
         text: `
-            <p class="mb-4">An <strong>Autoencoder</strong> is a neural network designed to compress data and then reconstruct it. It consists of two main parts:</p>
+            <p class="mb-4">An <strong>Autoencoder</strong> is a neural network designed to compress data and then reconstruct it. It consists of three main parts:</p>
             <ul class="space-y-3 mb-4 text-sm">
-                <li class="flex items-start"><span class="text-blue-500 font-bold mr-2">1.</span> <strong>Encoder:</strong> Compresses the input (e.g., an image) into a lower-dimensional representation.</li>
-                <li class="flex items-start"><span class="text-purple-500 font-bold mr-2">2.</span> <strong>Latent Space (Bottleneck):</strong> The compressed knowledge. It forces the network to keep only the most essential features.</li>
-                <li class="flex items-start"><span class="text-green-500 font-bold mr-2">3.</span> <strong>Decoder:</strong> Tries to reconstruct the original input from this compressed latent vector.</li>
+                <li class="flex items-start"><span class="text-blue-500 font-bold mr-2 shrink-0">1.</span> <span><strong>Encoder:</strong> Compresses the input (e.g., an image) into a lower-dimensional representation.</span></li>
+                <li class="flex items-start"><span class="text-purple-500 font-bold mr-2 shrink-0">2.</span> <span><strong>Latent Space (Bottleneck):</strong> The compressed knowledge. It forces the network to keep only the most essential features.</span></li>
+                <li class="flex items-start"><span class="text-green-500 font-bold mr-2 shrink-0">3.</span> <span><strong>Decoder:</strong> Tries to reconstruct the original input from this compressed latent vector.</span></li>
             </ul>
             <p class="text-sm bg-blue-50 p-3 rounded-lg border border-blue-100 text-blue-800"><strong>Goal:</strong> Make the Output look exactly like the Input.</p>
         `,
@@ -16,28 +19,28 @@ const steps = [
                 <div class="flex items-center space-x-4">
                     <!-- Input -->
                     <div class="flex flex-col items-center"><div class="w-16 h-16 bg-gray-200 border-2 border-gray-400 rounded-lg flex items-center justify-center text-xs text-gray-500">Input Image</div></div>
-                    <div class="flow-arrow"></div>
+                    <div class="flow-arrow hidden sm:block"></div>
                     <!-- Encoder -->
                     <div class="flex flex-col space-y-2 py-4 px-2 bg-blue-50 rounded-xl border border-blue-100">
                         <div class="text-xs font-bold text-blue-600 text-center mb-1">Encoder</div>
                         <div class="flex space-x-2 justify-center"><div class="w-4 h-4 bg-blue-400 rounded-full"></div><div class="w-4 h-4 bg-blue-400 rounded-full"></div><div class="w-4 h-4 bg-blue-400 rounded-full"></div></div>
                         <div class="flex space-x-2 justify-center"><div class="w-4 h-4 bg-blue-500 rounded-full"></div><div class="w-4 h-4 bg-blue-500 rounded-full"></div></div>
                     </div>
-                    <div class="flow-arrow"></div>
+                    <div class="flow-arrow hidden sm:block"></div>
                     <!-- Latent -->
                     <div class="flex flex-col space-y-2 items-center">
                         <div class="text-xs font-bold text-purple-600 mb-1">Latent Vector (z)</div>
                         <div class="w-6 h-6 bg-purple-500 rounded-full pulse-node text-white text-[10px] flex items-center justify-center">z1</div>
                         <div class="w-6 h-6 bg-purple-500 rounded-full pulse-node text-white text-[10px] flex items-center justify-center">z2</div>
                     </div>
-                    <div class="flow-arrow"></div>
+                    <div class="flow-arrow hidden sm:block"></div>
                     <!-- Decoder -->
                     <div class="flex flex-col space-y-2 py-4 px-2 bg-green-50 rounded-xl border border-green-100">
                         <div class="text-xs font-bold text-green-600 text-center mb-1">Decoder</div>
                         <div class="flex space-x-2 justify-center"><div class="w-4 h-4 bg-green-500 rounded-full"></div><div class="w-4 h-4 bg-green-500 rounded-full"></div></div>
                         <div class="flex space-x-2 justify-center"><div class="w-4 h-4 bg-green-400 rounded-full"></div><div class="w-4 h-4 bg-green-400 rounded-full"></div><div class="w-4 h-4 bg-green-400 rounded-full"></div></div>
                     </div>
-                    <div class="flow-arrow"></div>
+                    <div class="flow-arrow hidden sm:block"></div>
                     <!-- Output -->
                     <div class="flex flex-col items-center"><div class="w-16 h-16 bg-gray-200 border-2 border-gray-400 rounded-lg flex items-center justify-center text-xs text-gray-500 text-center">Reconstructed</div></div>
                 </div>
@@ -46,6 +49,8 @@ const steps = [
     },
     {
         title: "2. The Latent Space Flaw",
+        link: "./latent_space_flaw.html",
+        buttonText: "Latent Space Flaw Details",
         text: `
             <p class="mb-4">Why can't we use standard Autoencoders to generate <em>new</em> things?</p>
             <p class="mb-4 text-sm text-gray-600">Standard AEs map inputs to highly specific, isolated points in the latent space. They don't care about the space <em>between</em> the points.</p>
@@ -75,11 +80,13 @@ const steps = [
     },
     {
         title: "3. Variational Autoencoders (VAEs)",
+        link: "./variational_autoencoder.html",
+        buttonText: "Variational Autoencoder (VAEs) Details",
         text: `
             <p class="mb-4">To fix the "gaps", a <strong>Variational Autoencoder</strong> changes how the bottleneck works.</p>
             <p class="text-sm mb-4">Instead of mapping an image to a single point, the Encoder maps it to a <strong>Probability Distribution</strong> (a fuzzy zone).</p>
             <ul class="space-y-3 mb-4 text-sm text-gray-700 bg-purple-50 p-4 rounded-xl border border-purple-100">
-                <li><strong>1.</strong> The encoder outputs a <strong>Mean ($\mu$)</strong> (the center of the zone) and a <strong>Variance ($\sigma$)</strong> (how wide the zone is).</li>
+                <li><strong>1.</strong> The encoder outputs a <strong>Mean ($\\mu$)</strong> (the center of the zone) and a <strong>Variance ($\\sigma$)</strong> (how wide the zone is).</li>
                 <li><strong>2. Reparameterization Trick:</strong> We <em>sample</em> a random point $z$ from this zone.</li>
                 <li><strong>3.</strong> The decoder uses this sampled point to reconstruct the image.</li>
             </ul>
@@ -92,21 +99,21 @@ const steps = [
                         <div class="text-xs font-bold text-blue-600 text-center mb-1">Encoder</div>
                         <div class="flex space-x-2 justify-center"><div class="w-4 h-4 bg-blue-500 rounded-full"></div></div>
                     </div>
-                    <div class="flow-arrow w-6"></div>
+                    <div class="flow-arrow w-6 hidden sm:block"></div>
 
                     <!-- VAE Latent Split -->
                     <div class="flex flex-col items-center space-y-4">
                         <div class="flex flex-col items-center p-2 border border-purple-200 rounded-lg bg-purple-50">
-                            <div class="text-[10px] font-bold text-purple-600 mb-1">Mean ($\mu$)</div>
+                            <div class="text-[10px] font-bold text-purple-600 mb-1">Mean ($\\mu$)</div>
                             <div class="flex space-x-1"><div class="w-4 h-4 bg-purple-400 rounded-full"></div><div class="w-4 h-4 bg-purple-400 rounded-full"></div></div>
                         </div>
                         <div class="flex flex-col items-center p-2 border border-pink-200 rounded-lg bg-pink-50">
-                            <div class="text-[10px] font-bold text-pink-600 mb-1">Variance ($\sigma$)</div>
+                            <div class="text-[10px] font-bold text-pink-600 mb-1">Variance ($\\sigma$)</div>
                             <div class="flex space-x-1"><div class="w-4 h-4 bg-pink-400 rounded-full"></div><div class="w-4 h-4 bg-pink-400 rounded-full"></div></div>
                         </div>
                     </div>
 
-                    <div class="flow-arrow w-8 border-dashed border-gray-400 relative">
+                    <div class="flow-arrow w-8 border-dashed border-gray-400 relative hidden sm:block">
                         <span class="absolute -top-4 text-[10px] text-gray-500 w-16 -ml-4">Sample $z$</span>
                     </div>
 
@@ -118,7 +125,7 @@ const steps = [
                         </div>
                     </div>
 
-                    <div class="flow-arrow w-6"></div>
+                    <div class="flow-arrow w-6 hidden sm:block"></div>
                     <!-- Decoder -->
                     <div class="flex flex-col space-y-2 py-4 px-2 bg-green-50 rounded-xl border border-green-100">
                         <div class="text-xs font-bold text-green-600 text-center mb-1">Decoder</div>
@@ -130,6 +137,8 @@ const steps = [
     },
     {
         title: "4. Continuous Latent Space",
+        link: "./continuous_latent_space.html",
+        buttonText: "Continuous Latent Space Details",
         text: `
             <p class="mb-4">Because the network is forced to decode a slightly different point every time (due to sampling), the zones start to overlap.</p>
             <p class="mb-4 text-sm text-gray-600">The latent space becomes <strong>continuous and smooth</strong>. Similar concepts are grouped close together.</p>
@@ -163,11 +172,13 @@ const steps = [
     },
     {
         title: "5. The Mathematics of VAEs",
+        link: "./math_vaes.html",
+        buttonText: "Math of VAEs Details",
         text: `
             <p class="mb-3">To make this work, the VAE uses a special <strong>Loss Function</strong> composed of two distinct parts:</p>
 
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl mb-4 text-center overflow-x-auto">
-                <span class="text-lg">$$ \\mathcal{L} = \\text{Reconstruction Loss} + \\text{KL Divergence} $$</span>
+                <span class="text-lg">$$\\mathcal{L} = \\text{Reconstruction Loss} + \\text{KL Divergence}$$</span>
             </div>
 
             <div class="space-y-4 text-sm">
@@ -189,7 +200,7 @@ const steps = [
 
                     <div class="overflow-x-auto flex justify-center w-full">
                         <div class="text-base sm:text-lg w-max text-center">
-                            $$ \\mathcal{L}(\\theta, \\phi; x) = - D_{KL}(q_\\phi(z|x) \\parallel p(z)) + \\mathbb{E}_{q_\\phi(z|x)}[\\log p_\\theta(x|z)] $$
+                            $$\\mathcal{L}(\\theta, \\phi; x) = -  \\mathbb{E}_{q_\\phi(z|x)}[\\log p_\\theta(x|z)] + D_{KL}(q_\\phi(z|x) \\parallel p(z))$$
                         </div>
                     </div>
 
@@ -204,6 +215,62 @@ const steps = [
                         </div>
                     </div>
                     <p class="text-xs text-center text-gray-400 italic mt-6">The balance of these two opposing forces creates the perfect generative space.</p>
+                </div>
+            </div>
+        `
+    },
+    {
+        title: "6. Building a VAE in PyTorch",
+        link: "step6_details.html",
+        buttonText: "View Full Code",
+        text: `
+            <p class="mb-4">Let's put the concepts into practice using <strong>PyTorch</strong>. Here is a simplified version of how a VAE model is built.</p>
+            <ul class="space-y-3 mb-4 text-sm text-gray-700">
+                <li class="flex items-start"><span class="text-blue-500 font-bold mr-2 shrink-0">1.</span> <span><strong>The Encoder:</strong> A simple neural layer compresses a 784-pixel image (like an MNIST digit) into 400 abstract features.</span></li>
+                <li class="flex items-start"><span class="text-purple-500 font-bold mr-2 shrink-0">2.</span> <span><strong>The Latent Space:</strong> It splits the features into a Mean (<code>mu</code>) and Variance (<code>log_var</code>), then uses the reparameterization trick to sample a random point <code>z</code>.</span></li>
+                <li class="flex items-start"><span class="text-green-500 font-bold mr-2 shrink-0">3.</span> <span><strong>The Decoder:</strong> Takes the sampled point <code>z</code> and expands it back into a 784-pixel reconstructed image.</span></li>
+            </ul>
+        `,
+        visual: `
+            <div class="w-full h-full p-2 sm:p-4 flex items-center justify-center">
+                <div class="w-full max-w-lg bg-[#1e1e1e] rounded-xl shadow-lg overflow-hidden border border-gray-700">
+                    <div class="flex items-center px-4 py-2 bg-[#2d2d2d] border-b border-gray-700">
+                        <div class="flex space-x-2"><div class="w-3 h-3 bg-red-500 rounded-full"></div><div class="w-3 h-3 bg-yellow-500 rounded-full"></div><div class="w-3 h-3 bg-green-500 rounded-full"></div></div>
+                        <div class="ml-4 text-xs text-gray-400 font-mono">vae_model.py</div>
+                    </div>
+                    <pre class="p-4 text-[10px] sm:text-xs text-gray-300 font-mono overflow-x-auto leading-relaxed">
+    <span class="text-pink-400">import</span> torch
+    <span class="text-pink-400">import</span> torch.nn <span class="text-pink-400">as</span> nn
+
+    <span class="text-pink-400">class</span> <span class="text-green-400">VAE</span>(nn.Module):
+        <span class="text-pink-400">def</span> <span class="text-blue-400">__init__</span>(<span class="text-orange-400">self</span>):
+            <span class="text-blue-300">super</span>().__init__()
+            <span class="text-gray-500"># 1. Encoder</span>
+            <span class="text-orange-400">self</span>.encoder = nn.Linear(<span class="text-purple-400">784</span>, <span class="text-purple-400">400</span>)
+
+            <span class="text-gray-500"># 2. Latent Space (Mean & Variance)</span>
+            <span class="text-orange-400">self</span>.fc_mu = nn.Linear(<span class="text-purple-400">400</span>, <span class="text-purple-400">20</span>)
+            <span class="text-orange-400">self</span>.fc_var = nn.Linear(<span class="text-purple-400">400</span>, <span class="text-purple-400">20</span>)
+
+            <span class="text-gray-500"># 3. Decoder</span>
+            <span class="text-orange-400">self</span>.decoder = nn.Linear(<span class="text-purple-400">20</span>, <span class="text-purple-400">400</span>)
+            <span class="text-orange-400">self</span>.final_layer = nn.Linear(<span class="text-purple-400">400</span>, <span class="text-purple-400">784</span>)
+
+        <span class="text-pink-400">def</span> <span class="text-blue-400">reparameterize</span>(<span class="text-orange-400">self</span>, mu, log_var):
+            <span class="text-gray-500"># Sample random point z from the fuzzy zone</span>
+            std = torch.exp(<span class="text-purple-400">0.5</span> * log_var)
+            eps = torch.randn_like(std)
+            <span class="text-pink-400">return</span> mu + eps * std
+
+        <span class="text-pink-400">def</span> <span class="text-blue-400">forward</span>(<span class="text-orange-400">self</span>, x):
+            h = torch.relu(<span class="text-orange-400">self</span>.encoder(x))
+            mu, log_var = <span class="text-orange-400">self</span>.fc_mu(h), <span class="text-orange-400">self</span>.fc_var(h)
+
+            z = <span class="text-orange-400">self</span>.reparameterize(mu, log_var)
+
+            h_decode = torch.relu(<span class="text-orange-400">self</span>.decoder(z))
+            reconstruction = torch.sigmoid(<span class="text-orange-400">self</span>.final_layer(h_decode))
+            <span class="text-pink-400">return</span> reconstruction, mu, log_var</pre>
                 </div>
             </div>
         `
@@ -284,11 +351,23 @@ function updateUI() {
 
     setTimeout(() => {
         contentArea.innerHTML = `
-            <div class="w-full md:w-5/12 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-100 pb-6 md:pb-0 md:pr-8">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-6">${stepData.title}</h2>
-                <div class="text-gray-600 leading-relaxed">
-                    ${stepData.text}
+            <div class="w-full md:w-5/12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100 pb-6 md:pb-0 md:pr-8">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-6">${stepData.title}</h2>
+                    <div class="text-gray-600 leading-relaxed">
+                        ${stepData.text}
+                    </div>
                 </div>
+
+                ${currentStep === steps.length - 1 ? '' : `
+                <!-- Dynamically Injected Button at the Bottom of Left Section -->
+                <div class="mt-8">
+                    <button onclick="window.open('${stepData.link}', '_blank')"
+                        class="w-full sm:w-auto px-6 py-2.5 rounded-full font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 transition-colors shadow-sm text-center">
+                        ${stepData.buttonText} &#8599;
+                    </button>
+                </div>
+                `}
             </div>
             <div class="w-full md:w-7/12 flex items-center justify-center min-h-[300px] bg-gray-50/50 rounded-2xl md:ml-4">
                 ${stepData.visual}

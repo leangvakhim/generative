@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAE Concept: Fuzzy Cookie Analogy</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- KaTeX for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* Custom styles for the cookie visualization */
+        .cookie-base {
+            background: radial-gradient(circle at 30% 30%, #e6a861, #c58339);
+            box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.2), 5px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .chocolate-chip {
+            background: radial-gradient(circle at 30% 30%, #4a2511, #2b1408);
+            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.5), 1px 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Smooth fade transition for steps */
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Range slider styling to look a bit nicer */
+        input[type=range] {
+            accent-color: #c58339;
+        }
+    </style>
+</head>
+
+<body class="bg-amber-50 text-slate-800 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Container -->
+    <div class="max-w-3xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-amber-100">
+
+        <!-- Header -->
+        <div class="bg-amber-600 text-white p-6 text-center relative overflow-hidden">
+            <div
+                class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')] bg-repeat">
+            </div>
+            <h1 class="text-2xl md:text-3xl font-bold relative z-10">Variational Autoencoders (VAEs)</h1>
+            <p class="text-amber-100 mt-2 relative z-10 text-lg">The "Fuzzy Cookie Recipe" Analogy</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 h-1.5">
+            <div id="progress-bar" class="bg-amber-500 h-1.5 transition-all duration-300" style="width: 20%;"></div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 md:p-10 min-h-[400px]">
+
+            <!-- Step 1: Introduction -->
+            <div id="step-0" class="step-content active">
+                <h2 class="text-2xl font-bold text-amber-800 mb-4">Imagine a Magical Cookie Machine 🍪</h2>
+                <p class="text-lg mb-4">
+                    In an older, simpler machine (a <strong>Standard Autoencoder</strong>), you have to give it an
+                    exact, strict command:
+                    <em class="text-slate-600">"Bake a cookie with exactly 10 chocolate chips in the center."</em>
+                </p>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded">
+                    <p class="text-red-800">
+                        <strong>The Problem:</strong> If you accidentally ask for 12 chips, the machine gets confused
+                        because it only memorized how to make exactly 10 or exactly 20. It has "gaps" in its memory.
+                    </p>
+                </div>
+                <p class="text-lg">
+                    A <strong>Variational Autoencoder (VAE)</strong> fixes these gaps by using a <strong>"Fuzzy
+                        Zone"</strong> instead of strict rules. Let's see how it works step-by-step.
+                </p>
+            </div>
+
+            <!-- Step 2: The Encoder -->
+            <div id="step-1" class="step-content">
+                <h2 class="text-2xl font-bold text-amber-800 mb-4">1. The Encoder (Writing a Fuzzy Recipe)</h2>
+                <p class="text-lg mb-4">
+                    Instead of saying "exactly 10 chips," the Encoder writes a <strong>fuzzy recipe</strong>. It outputs
+                    two specific instructions to create a probability distribution:
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                        <h3 class="font-bold text-blue-800 text-xl mb-2">Mean ($ \mu $)</h3>
+                        <p>The center target. For example: <br><em>"We want around 10 chips."</em></p>
+                    </div>
+                    <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                        <h3 class="font-bold text-green-800 text-xl mb-2">Variance ($ \sigma^2 $)</h3>
+                        <p>The fuzziness or wiggle room. For example: <br><em>"Give or take 2 chips."</em></p>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <p class="text-lg text-slate-600">
+                        Together, these define a Normal Distribution:
+                    </p>
+                    <div class="my-4 text-2xl">
+                        $$ \mathcal{N}(\mu, \sigma^2) $$
+                    </div>
+                    <p>This creates a fuzzy zone where 9, 10, or 11 chips are highly likely, but 7 or 13 are possible
+                        but less likely.</p>
+                </div>
+            </div>
+
+            <!-- Step 3: Reparameterization Trick -->
+            <div id="step-2" class="step-content">
+                <h2 class="text-2xl font-bold text-amber-800 mb-4">2. The Reparameterization Trick</h2>
+                <p class="text-lg mb-4">
+                    We can't bake a "fuzzy" cookie; we need an <strong>actual whole number</strong> to give the oven.
+                    So, we reach into this fuzzy zone and randomly pull out one specific number (Sampling).
+                </p>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 my-6 shadow-inner">
+                    <p class="mb-4">To do this mathematically while allowing the machine to still learn
+                        (backpropagation), VAEs use a clever trick:</p>
+
+                    <div class="text-2xl text-center mb-4">
+                        $$ z = \mu + \sigma \odot \epsilon $$
+                    </div>
+
+                    <ul class="space-y-3 text-slate-700">
+                        <li>$ z $ : The final specific number of chips we will bake (The Sample).</li>
+                        <li>$ \mu $ : Our target amount (e.g., 10).</li>
+                        <li>$ \sigma $ : Our wiggle room (Standard Deviation).</li>
+                        <li>$ \epsilon $ : A random number pulled from a standard normal distribution $
+                            \mathcal{N}(0, 1) $. This is the "random reach" into the fuzzy zone!</li>
+                    </ul>
+                </div>
+                <p class="italic text-center text-amber-700">Let's try this trick ourselves on the next page!</p>
+            </div>
+
+            <!-- Step 4: Interactive Simulator -->
+            <div id="step-3" class="step-content">
+                <h2 class="text-2xl font-bold text-amber-800 mb-2">VAE Cookie Simulator 🧪</h2>
+                <p class="text-sm text-slate-500 mb-6">Adjust the fuzzy recipe and sample a cookie to see the
+                    Reparameterization trick in action!</p>
+
+                <div class="flex flex-col md:flex-row gap-8">
+                    <!-- Controls -->
+                    <div class="flex-1 bg-amber-50 p-5 rounded-xl border border-amber-200">
+
+                        <div class="mb-6">
+                            <label class="flex justify-between font-bold text-slate-700 mb-2">
+                                <span>Mean ($ \mu $) - Target Chips</span>
+                                <span id="mu-val" class="text-amber-600">10</span>
+                            </label>
+                            <input type="range" id="slider-mu" min="2" max="25" value="10" class="w-full">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="flex justify-between font-bold text-slate-700 mb-2">
+                                <span>Std. Dev. ($ \sigma $) - Fuzziness</span>
+                                <span id="sigma-val" class="text-amber-600">2.0</span>
+                            </label>
+                            <input type="range" id="slider-sigma" min="0" max="6" step="0.5" value="2.0" class="w-full">
+                        </div>
+
+                        <button onclick="bakeCookie()"
+                            class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all active:transform active:scale-95 flex items-center justify-center gap-2">
+                            <span>Sample & Bake</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                                </path>
+                            </svg>
+                        </button>
+
+                        <div
+                            class="mt-6 p-4 bg-white rounded shadow-sm border border-slate-100 text-sm font-mono text-slate-600">
+                            <div class="mb-1">Random $ \epsilon $: <span id="out-epsilon"
+                                    class="font-bold text-blue-600">0.00</span></div>
+                            <hr class="my-2 border-slate-100">
+                            <div class="text-xs text-slate-400 mb-1">$ z = \mu + (\sigma \times \epsilon) $</div>
+                            <div id="out-calc">10 + (2.0 &times; 0.00) = 10.00</div>
+                            <div class="mt-2 text-lg text-amber-800">Final Chips ($ z $): <strong
+                                    id="out-z">10</strong></div>
+                        </div>
+
+                    </div>
+
+                    <!-- Visualization -->
+                    <div class="flex-1 flex items-center justify-center relative">
+                        <div id="cookie-container"
+                            class="cookie-base rounded-full relative w-48 h-48 md:w-64 md:h-64 transition-transform duration-300">
+                            <!-- Chips will be injected here via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Conclusion -->
+            <div id="step-4" class="step-content">
+                <h2 class="text-2xl font-bold text-amber-800 mb-4">3. The Decoder & The Magic of VAEs</h2>
+                <p class="text-lg mb-4">
+                    The <strong>Decoder</strong> takes that specific, sampled number ($ z $) from the previous step
+                    and actually bakes the cookie.
+                </p>
+                <div class="bg-amber-100 p-6 rounded-xl border border-amber-300 shadow-sm mt-6">
+                    <h3 class="font-bold text-xl text-amber-900 mb-3">Why is this "Fuzzy Zone" so powerful?</h3>
+                    <p class="mb-4">
+                        Because we are using a variance (fuzziness) instead of strict single points, the different
+                        recipes start to <strong>overlap</strong>. There are no more gaps in the machine's memory!
+                    </p>
+                    <p>
+                        You can smoothly transition from a <em>"chocolate chip"</em> fuzzy zone to a <em>"raisin"</em>
+                        fuzzy zone, and the machine can sample the overlapping areas to invent <strong>entirely new
+                            cookies</strong> that are a perfect mix of both. This smooth, gapless area is called a
+                        continuous latent space.
+                    </p>
+                </div>
+                <div class="text-center mt-8">
+                    <span
+                        class="inline-block bg-green-100 text-green-800 font-bold py-2 px-4 rounded-full border border-green-300">
+                        You've mastered the VAE Cookie Concept! 🎉
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="bg-slate-50 border-t border-slate-200 p-4 px-6 flex justify-between items-center">
+            <button id="btn-back" onclick="navigate(-1)"
+                class="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                &larr; Back
+            </button>
+            <span id="step-indicator" class="text-slate-500 font-medium text-sm">Step 1 of 5</span>
+            <button id="btn-next" onclick="navigate(1)"
+                class="px-5 py-2 rounded-lg font-bold bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed">
+                Next &rarr;
+            </button>
+        </div>
+
+    </div>
+
+    <script src="../js/variational_autoencoder.js"></script>
+</body>
+
+</html>

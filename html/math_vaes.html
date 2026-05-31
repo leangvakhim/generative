@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAE Toy Factory Visualization</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* Custom styling for the slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        /* Webkit (Chrome, Safari, Edge) */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+            border: 2px solid #ffffff;
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Firefox */
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+            border: 2px solid #ffffff;
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-moz-range-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800 flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-2xl overflow-hidden flex flex-col border border-slate-200">
+
+        <!-- Header -->
+        <div
+            class="px-8 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex justify-between items-center shadow-md z-10">
+            <h1 class="text-xl md:text-2xl font-bold tracking-wide">Generative Models: VAEs Explained</h1>
+            <span id="step-counter" class="px-3 py-1.5 bg-white/20 rounded-full text-sm font-semibold backdrop-blur-sm">
+                Step 1 of 7
+            </span>
+        </div>
+
+        <!-- Dynamic Content Area -->
+        <div id="step-container" class="p-8 min-h-[450px] flex flex-col justify-center relative overflow-y-auto">
+            <!-- Content gets injected here by JS -->
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="px-8 py-5 bg-slate-50 flex justify-between border-t border-slate-200">
+            <button id="btn-prev"
+                class="px-6 py-2.5 bg-white text-slate-700 font-semibold rounded-lg shadow-sm border border-slate-300 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                &larr; Back
+            </button>
+            <button id="btn-next"
+                class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all focus:ring-4 focus:ring-indigo-300">
+                Next &rarr;
+            </button>
+        </div>
+
+    </div>
+
+    <script src="../js/math_vaes.js"></script>
+</body>
+
+</html>
