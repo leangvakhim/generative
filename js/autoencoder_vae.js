@@ -49,7 +49,7 @@ const steps = [
     },
     {
         title: "2. The Latent Space Flaw",
-        link: "./latent_space_flaw.html",
+        link: "./latent_space.html",
         buttonText: "Latent Space Flaw Details",
         text: `
             <p class="mb-4">Why can't we use standard Autoencoders to generate <em>new</em> things?</p>
